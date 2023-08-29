@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8' />
+  <title>Mapbox GeoJSON Layer</title>
+  <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+  <script src='https://api.mapbox.com/mapbox-gl-js/v2.4.1/mapbox-gl.js'></script>
+  <link href='https://api.mapbox.com/mapbox-gl-js/v2.4.1/mapbox-gl.css' rel='stylesheet' />
+  <style>
+    body { margin: 0; padding: 0; }
+    #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+    #legend { position: absolute; top: 10px; right: 10; width: 30%; padding: 10px; }
+    .legend-item { display: flex; align-items: center; margin-bottom: 5px; color: white; }
+    .legend-color { width: 20px; height: 20px; margin-right: 5px; }
+
+    
+    .mapboxgl-ctrl-group {
+      display: flex;
+      flex-direction: row;
+      position: absolute;
+      top: 60px;
+      left: 10px;
+      z-index: 1;
+    }
+    .mapboxgl-ctrl-group > button {
+      background-color: #0084C9;
+      color: white; 
+      border: none;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: bold;
+      line-height: 1.4;
+      margin: 1px;
+      padding: 1px 5px;
+      text-align: center;
+      text-decoration: none;
+      white-space: normal; 
+    word-wrap: break-word; 
+    cursor: pointer;
+    width: auto; 
+    }
+  </style>
+</head>
+<body>
+  <div id='map'></div>
+  <div id='legend'>
+    <div class='legend-item'>
+      <div class='legend-color' style='background-color: red;'></div>
+      Imagery Area
+    </div>
+    <div class='legend-item'>
+      <div class='legend-color' style='background-color: #07FD29;'></div>
+      Imagery Flown
+    </div>
+    <div class='legend-item'>
+      <div class='legend-color' style='background-color: #FD07EE;'></div>
+      LiDAR Area
+    </div>
+    <div class='legend-item'>
+      <div class='legend-color' style='background-color: blue;'></div>
+      LiDAR Flown
+    </div>
+  <div class='mapboxgl-ctrl-group'>
+    <button id='btnToggle' class='mapboxgl-ctrl-group'>Imagery/LiDAR</button>
+  </div>
+
+  <script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoiamFtZXMtbWNrZW56aWUtYXNsIiwiYSI6ImNsaHBtYXo1aDA4MWczZ281bXJhbnc0dGMifQ.8pxJxAy6HV0CQfuibaIFmw';
+
+    var map = new mapboxgl.Map({
+      container: 'map',
+      style: 'mapbox://styles/mapbox/satellite-streets-v12',
+      center: [174.612448, -40.685248],
+      zoom: 4.87
+    });
+
+    //map.on('load', function () {
+      // Add your sources and layers here...
+      var layerGroup1 = {
+      id: 'ProjectLayer',
+      type: 'fill',
+      source: {
+        type: 'geojson',
+        data: 'Data/2023-2024 ASL Imagery Area.geojson'
+      },
+      paint: {
+        'fill-color': 'Red',
+        'fill-opacity': 0.8
+      }
+    };
+
+    var layerGroup2 = {
+      id: 'ImageFlown',
+      type: 'fill',
+      source: {
+        type: 'geojson',
+        data: 'Data/2023-2024 ASL Imagery Flown.geojson'
+      },
+      paint: {
+        'fill-color': '#07FD29',
+        'fill-opacity': 0.8
+      }
+    };
+
+    var layerGroup3 = {
+      id: 'ImageCentres',
+      type: 'circle',
+      source: {
+        type: 'geojson',
+        data: 'Data/2023-2024 ASL Imagery Centres.geojson'
+      },
+      paint: {
+        'circle-radius': [
+          'interpolate',
+          ['exponential', 1.10],
+          ['zoom'],
+          0,
+          2,
+          25,
+          20
+        ],
+        'circle-color': 'White'
+      }
+    };
+
+    var layerGroup4 = {
+      id: 'CoverageLayer',
+      type: 'fill',
+      source: {
+        type: 'geojson',
+        data: 'Data/2023-2024 ASL LiDAR Area.geojson'
+      },
+      paint: {
+        'fill-color': '#FD07EE',
+        'fill-opacity': 0.8
+      },
+      layout: {
+        visibility: 'none' // Initially hidden
+      }
+    };
+
+    var layerGroup5 = {
+      id: 'LidarFlown',
+      type: 'fill',
+      source: {
+        type: 'geojson',
+        data: 'Data/2023-2024 ASL LiDAR Flown.geojson'
+      },
+      paint: {
+        'fill-color': 'blue',
+        'fill-opacity': 0.8
+      },
+      layout: {
+        visibility: 'none' // Initially hidden
+      }
+    };
+
+    var layerGroup6 = {
+      id: 'LiDARCentres',
+      type: 'circle',
+      source: {
+        type: 'geojson',
+        data: 'Data/2023-2024 ASL LiDAR Centres.geojson'
+      },
+      paint: {
+        'circle-radius': [
+          'interpolate',
+          ['exponential', 1.10],
+          ['zoom'],
+          0,
+          2,
+          25,
+          20
+        ],
+        'circle-color': 'White'
+      }
+    };
+
+    var currentLayer = 'ProjectLayer'; // Track the current active layer
+
+    map.on('load', function () {
+      map.addLayer(layerGroup1);
+      map.addLayer(layerGroup2);
+      map.addLayer(layerGroup3);
+      map.addLayer(layerGroup4);
+      map.addLayer(layerGroup5);
+      map.addLayer(layerGroup6);
+
+      // Button event listener
+      document.getElementById('btnToggle').addEventListener('click', function () {
+        if (currentLayer === 'ProjectLayer') {
+          map.setLayoutProperty('ProjectLayer', 'visibility', 'none');
+          map.setLayoutProperty('ImageFlown', 'visibility', 'none');
+          map.setLayoutProperty('ImageCentres', 'visibility', 'none');
+          map.setLayoutProperty('CoverageLayer', 'visibility', 'visible');
+          map.setLayoutProperty('LidarFlown', 'visibility', 'visible');
+          map.setLayoutProperty('LidarCentres', 'visibility', 'visible');
+          currentLayer = 'CoverageLayer';
+        } else {
+          map.setLayoutProperty('ProjectLayer', 'visibility', 'visible');
+          map.setLayoutProperty('ImageFlown', 'visibility', 'visible');
+          map.setLayoutProperty('ImageCentres', 'visibility', 'visible');
+          map.setLayoutProperty('CoverageLayer', 'visibility', 'none');
+          map.setLayoutProperty('LidarFlown', 'visibility', 'none');
+          map.setLayoutProperty('LidarCentres', 'visibility', 'none');
+          currentLayer = 'ProjectLayer';
+        }
+      });
+
+      map.on('click', function (e) {
+  const featuresPCentre = map.queryRenderedFeatures(e.point, { layers: ['ImageCentres','LiDARCentres'] });
+  
+  if (featuresPCentre.length > 0 ) {
+    const featurePCentre = featuresPCentre[0];
+    
+    // Retrieve associated features from the other layers
+    const featureCoverage = map.queryRenderedFeatures(e.point, { layers: ['CoverageLayer'] })[0];
+    const featureProject = map.queryRenderedFeatures(e.point, { layers: ['ProjectLayer'] })[0];
+
+    const coordinates = featurePCentre.geometry.coordinates.slice();
+    const description = "<span style='color: #7FBA00;font-size: 12px;'><b>" + featurePCentre.properties.SN_No + "</b></br>" +
+                              "<span style='color: black;'><b>Project Code: </b>" + featurePCentre.properties.Project_Ref + "</br>" +
+                              "<b>Survey Number: </b>" + featurePCentre.properties.Company_Name + "</br>" +
+                              "<b>GSD: </b>" + featurePCentre.properties.OrthoGSD_m + "</br>"+
+                              "<b>Point Density: </b>" + featurePCentre.properties["PointDensity_(points/m2)"] + "</br>"+
+                              "<b>Project: </b>" + featurePCentre.properties.Description + "</br>";
+
+    
+    var popupContent = document.createElement('div');
+    popupContent.innerHTML = description;
+
+    var popup = new mapboxgl.Popup({})
+      .setLngLat(coordinates)
+      .setDOMContent(popupContent)
+      .addTo(map);
+  }
+});
+
+map.on('mouseenter', 'ImageCentres', function () {
+        map.getCanvas().style.cursor = 'pointer';
+      });
+      map.on('mouseenter', 'LiDARCentres', function () {
+        map.getCanvas().style.cursor = 'pointer';
+      });
+
+      map.on('mouseleave', 'ImageCentres', function () {
+        map.getCanvas().style.cursor = '';
+      });
+
+      map.on('mouseleave', 'LiDARCentres', function () {
+        map.getCanvas().style.cursor = '';
+      });
+
+    });
+ 
+  </script>
+</body>
+</html>
