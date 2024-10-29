@@ -1,0 +1,13 @@
+{
+"type": "FeatureCollection",
+"name": "2024-2025 ASL LiDAR Centres",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"xy_coordinate_resolution": 1e-15,
+"features": [
+{ "type": "Feature", "properties": { "Project_Ref": "FPFA1375", "SN_No": "Vadis Geomatics", "Company_Name": "SN14352", "Description": "Manawatu - 2024 1325 m AGL LiDAR Survey", "OrthoGSD_m": null, "PointDensity_(points/m2)": "8.279999999999999" }, "geometry": { "type": "Point", "coordinates": [ 175.479490420266927, -40.606491914817155 ] } },
+{ "type": "Feature", "properties": { "Project_Ref": "FPFA1386", "SN_No": "Southwood Export", "Company_Name": "SN14364", "Description": "Southland & Otago Forestry - 2024 1300 m AGL LiDAR survey", "OrthoGSD_m": null, "PointDensity_(points/m2)": "6.2" }, "geometry": { "type": "Point", "coordinates": [ 168.117421263977576, -46.234926619344314 ] } },
+{ "type": "Feature", "properties": { "Project_Ref": "FPFA1388", "SN_No": "Rayonier NZ", "Company_Name": "SN14367", "Description": "Tairua Forests, Ohui & Hikuai - 2024 1275 m AGL LiDAR survey", "OrthoGSD_m": null, "PointDensity_(points/m2)": "8.130000000000001" }, "geometry": { "type": "Point", "coordinates": [ 175.838865625886172, -37.070957914991872 ] } },
+{ "type": "Feature", "properties": { "Project_Ref": "FPFA1391", "SN_No": "Otago RC", "Company_Name": "SN14373", "Description": "Roxburgh Debris Flows AOI - 2024 1850 m AGL LiDAR survey", "OrthoGSD_m": null, "PointDensity_(points/m2)": "4" }, "geometry": { "type": "Point", "coordinates": [ 169.29665937443437, -45.57493890189923 ] } },
+{ "type": "Feature", "properties": { "Project_Ref": "FPFA1394", "SN_No": "Downer NZ", "Company_Name": "SN14371", "Description": "Mt Messenger - 2025 1750 m AGL flying & LiDAR", "OrthoGSD_m": null, "PointDensity_(points/m2)": "12.3" }, "geometry": { "type": "Point", "coordinates": [ 174.599778479800307, -38.877089331852183 ] } }
+]
+}
